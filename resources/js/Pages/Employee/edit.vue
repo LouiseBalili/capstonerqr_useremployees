@@ -1,6 +1,6 @@
 <script setup>
     import SideBarLayout from '@/Layouts/SideBarLayout.vue';
-    import { ref } from 'vue';
+    import { ref, watch } from 'vue';
     import { Link , Head} from '@inertiajs/vue3';
     import { useForm } from '@inertiajs/vue3';
 
@@ -33,10 +33,14 @@
 
     const isActive = ref(props.employee.status === 1);
 
-    const toggleActive = (employee) => {
+    const toggleActive = () => {
         isActive.value = !isActive.value;
-        employee.status = isActive.value ? 1 : 0;
+        form.status = isActive.value ? 1 : 0;
     };
+
+    watch(() => props.employee.status, () => {
+        isActive.value = props.employee.status === 1;
+    });
 
     const submit = () =>{
         form.put(`/employees/${props.employee.id}`);
@@ -60,8 +64,8 @@
                             <div class="flex items-center mr-6">
                                 <h1 class="text-sm mr-2">Active status:</h1>
                                 <label class="relative inline-flex items-center cursor-pointer" :for="'status-' + employee.id">
-                                    <input type="checkbox" :checked="isActive" :id="'status-' + employee.id" class="sr-only peer" @change="toggleActive(employee)">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                    <input type="checkbox" :checked="isActive" class="peer hidden" @change="toggleActive">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600" @click="toggleActive"></div>
                                     <span class="ml-6 text-md font-semibold text-gray-900 dark:text-gray-300"></span>
                                 </label>
                             </div>
