@@ -88,34 +88,38 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, Employee $employee)
     {
-         $user = $employee->user;
+        $user = $employee->user;
+        $user->update([
+            'firstName' => $request->input('firstName'),
+            'middleName' => $request->input('middleName'),
+            'lastName' => $request->input('lastName'),
+            'suffix' => $request->input('suffix'),
+            'gender' => $request->input('gender'),
+            'phone' => $request->input('phone'),
+            'address' => $request->input('address'),
+            'email' => $request->input('email'),
+        ]);
 
-    // Update user details
-    $user->update([
-        'firstName' => $request->input('firstName'),
-        'middleName' => $request->input('middleName'),
-        'lastName' => $request->input('lastName'),
-        'suffix' => $request->input('suffix'),
-        'gender' => $request->input('gender'),
-        'phone' => $request->input('phone'),
-        'address' => $request->input('address'),
-        'email' => $request->input('email'),
-    ]);
+        // Update employee details
+        $employee->update([
+            'pos_id' => $request->input('pos_id'),
+            'status' => $request->input('status'),
+        ]);
 
-    // Update employee details
-    $employee->update([
-        'pos_id' => $request->input('pos_id'),
-        'status' => $request->input('status'),
-        'role_id' => $request->input('role_id'),
-    ]);
+        $roleName = $request->input('role');
 
-    $newRole = Role::find($request->input('role_id'));
+        $spatieRoleNames = [
+            'Employee' => 'employee',
+            'Special Employee' => 'specialEmployee',
+        ];
 
-    if ($newRole) {
-        $user->syncRoles([$newRole->name]);
-    }
+        $role = Role::where('name', $spatieRoleNames[$roleName])->first();
 
-    return redirect('/employees')->with('message', 'Employee information updated successfully');
+        if ($role) {
+            $user->syncRoles([$role->name]);
+        }
+
+        return redirect('/employees')->with('message', 'Employee information updated successfully');
     }
 
     /**

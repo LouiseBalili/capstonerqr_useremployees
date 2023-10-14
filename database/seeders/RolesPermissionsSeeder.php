@@ -7,6 +7,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\View;
 
 class RolesPermissionsSeeder extends Seeder
 {
@@ -48,5 +49,13 @@ class RolesPermissionsSeeder extends Seeder
         User::find(3)->assignRole($role_specialEmployee);
         User::find(4)->assignRole($role_owner);
 
+        // Retrieve the "employee" and "specialEmployee" roles and pass their IDs to the view
+        $employeeRole = Role::where('name', 'employee')->first();
+        $specialEmployeeRole = Role::where('name', 'specialEmployee')->first();
+
+        View::share([
+            'employeeRoleId' => $employeeRole ? $employeeRole->id : null,
+            'specialEmployeeRoleId' => $specialEmployeeRole ? $specialEmployeeRole->id : null,
+        ]);
     }
 }

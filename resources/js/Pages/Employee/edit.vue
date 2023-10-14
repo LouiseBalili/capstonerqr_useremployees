@@ -19,6 +19,7 @@
         suffix: props.employee.user.suffix,
         email:props.employee.user.email,
         address:props.employee.user.address,
+        role: '',
         password:'',
         password_confirmation:'',
         status:props.employee.status,
@@ -56,7 +57,11 @@
     };
 
     const submit = () =>{
-      form.put(`/employees/${props.employee.id}`);
+        let roleName = form.role === 'Employee' ? 'employee' : 'specialEmployee';
+
+        form.put(`/employees/${props.employee.id}`, {
+            role: roleName,
+        });
     }
 </script>
 
