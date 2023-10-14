@@ -3,6 +3,7 @@
     import { ref, watch } from 'vue';
     import { Link , Head} from '@inertiajs/vue3';
     import { useForm } from '@inertiajs/vue3';
+    import { onMounted } from 'vue';
 
     let props = defineProps({
         employee: Object,
@@ -31,21 +32,40 @@
     // const selectedServices = ref([]);
     // const services = ref([]);
 
+    onMounted(() => {
+        // Restore toggle switch state from local storage
+        const savedToggleState = JSON.parse(localStorage.getItem('toggleState'));
+        if (savedToggleState !== null) {
+            isActive.value = savedToggleState;
+        }
+
+        // Restore scroll position from local storage
+        const savedScrollPosition = localStorage.getItem('scrollPosition');
+        if (savedScrollPosition !== null) {
+            window.scrollTo(0, savedScrollPosition);
+        }
+    });
+
     const isActive = ref(props.employee.status === 1);
+
+    watch(() => props.employee.status, (newStatus) => {
+      isActive.value = newStatus === 1;
+  });
 
     const toggleActive = () => {
         isActive.value = !isActive.value;
         form.status = isActive.value ? 1 : 0;
+
+        localStorage.setItem('toggleState', JSON.stringify(isActive.value));
     };
 
-    watch(() => props.employee.status, () => {
-        isActive.value = props.employee.status === 1;
-    });
+    window.addEventListener('scroll', () => {
+      localStorage.setItem('scrollPosition', window.pageYOffset);
+  });
 
     const submit = () =>{
-        form.put(`/employees/${props.employee.id}`);
+      form.put(`/employees/${props.employee.id}`);
     }
-
 </script>
 
 <template>
@@ -64,7 +84,7 @@
                             <div class="flex items-center mr-6">
                                 <h1 class="text-sm mr-2">Active status:</h1>
                                 <label class="relative inline-flex items-center cursor-pointer" :for="'status-' + employee.id">
-                                    <input type="checkbox" :checked="isActive" class="peer hidden" @change="toggleActive">
+                                    <input type="checkbox" v-model="isActive" class="peer hidden" @change="toggleActive">
                                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600" @click="toggleActive"></div>
                                     <span class="ml-6 text-md font-semibold text-gray-900 dark:text-gray-300"></span>
                                 </label>
@@ -146,10 +166,10 @@
                           <div class="m:col-span-2">
                             <label for="role" class="block text-sm font-medium leading-6 text-gray-900">Role</label>
                             <div class="mt-2">
-                                <select id="role" v-model="form.role" name="services" autocomplete="services"  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" >
+                                <select id="role" v-model="form.role" name="role" autocomplete="role" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" >
                                   <option selected disabled >Select Role</option>
-                                  <option value="emp">Employee</option>
-                                  <option value="specialemp">Special Employee</option>
+                                  <option value="Employee">Employee</option>
+                                  <option value="Special Employee">Special Employee</option>
                                 </select>
                                 <div class="text-sm text-red-500 italic" v-if="form.errors.role">{{ form.errors.role }}</div>
                               </div>
