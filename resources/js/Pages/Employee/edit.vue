@@ -32,14 +32,14 @@
     // const selectedServices = ref([]);
     // const services = ref([]);
 
+    const localStorageKeyToggle = `toggleState_${props.employee.id}`;
+
     onMounted(() => {
-        // Restore toggle switch state from local storage
-        const savedToggleState = JSON.parse(localStorage.getItem('toggleState'));
+        const savedToggleState = JSON.parse(localStorage.getItem(localStorageKeyToggle));
         if (savedToggleState !== null) {
             isActive.value = savedToggleState;
         }
 
-        // Restore scroll position from local storage
         const savedScrollPosition = localStorage.getItem('scrollPosition');
         if (savedScrollPosition !== null) {
             window.scrollTo(0, savedScrollPosition);
@@ -48,20 +48,12 @@
 
     const isActive = ref(props.employee.status === 1);
 
-    watch(() => props.employee.status, (newStatus) => {
-      isActive.value = newStatus === 1;
-  });
-
     const toggleActive = () => {
         isActive.value = !isActive.value;
         form.status = isActive.value ? 1 : 0;
 
-        localStorage.setItem('toggleState', JSON.stringify(isActive.value));
+        localStorage.setItem(localStorageKeyToggle, JSON.stringify(isActive.value));
     };
-
-    window.addEventListener('scroll', () => {
-      localStorage.setItem('scrollPosition', window.pageYOffset);
-  });
 
     const submit = () =>{
       form.put(`/employees/${props.employee.id}`);
