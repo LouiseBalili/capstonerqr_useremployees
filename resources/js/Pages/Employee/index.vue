@@ -31,7 +31,7 @@
                             <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                                 <th class="py-3 px-6 text-left">Id</th>
                                 <th class="py-3 px-6 text-left">Name</th>
-                                <th class="py-3 px-6 text-center">Gender</th>
+                                <th class="py-3 px-6 text-center">Position</th>
                                 <th class="py-3 px-6 text-center">Phone</th>
                                 <th class="py-3 px-6 text-center">Email</th>
                                 <th class="py-3 px-6 text-center">Status</th>
@@ -54,7 +54,7 @@
                                 </td>
                                 <td class="py-3 px-6 text-center">
                                     <div class="flex items-center justify-center">
-                                        <p class="font-medium">{{ emp.user.gender}}</p>
+                                        <p class="font-medium">{{ emp.position.position}}</p>
                                     </div>
                                 </td>
                                 <td class="py-3 px-6 text-center">
